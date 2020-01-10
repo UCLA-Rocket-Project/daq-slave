@@ -18,7 +18,7 @@ void setup() {
 	// initialize ethernet / networking
 	Serial.println(F("Setting up ethernet...."));
 	Ethernet.init(ETHERNET_CS_PIN);
-	Ethernet.begin(macAddress, ip, dnsAddr, gateway, subnet);
+	Ethernet.begin(macAddress);
 	if(Ethernet.hardwareStatus() == EthernetNoHardware) {
 		Serial.println(F("Could not detect any hardware"));
 		flagError(ETHERNET_HARDWARE_FAIL);

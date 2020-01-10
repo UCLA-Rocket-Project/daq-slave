@@ -30,10 +30,6 @@ const uint8_t THERMOCOUPLE_A2 = 6;
 
 // network settings
 static uint8_t macAddress[] = { 0xAB, 0xBC, 0xCD, 0xDE, 0xEF, 0x00 };
-static IPAddress ip(192, 168, 1, 177);
-static IPAddress dnsAddr(8, 8, 8, 8);
-static IPAddress gateway(192, 168, 1, 1);
-static IPAddress subnet(255, 255, 0, 0);
 const uint16_t PORT = 502;
 const long MAX_TIMEOUT = 3000;
 
