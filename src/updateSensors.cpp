@@ -39,15 +39,3 @@ void muxPins(uint8_t target) {
 	digitalWrite(THERMOCOUPLE_A1, target & 0x10);
 	digitalWrite(THERMOCOUPLE_A2, target & 0x100);
 }
-
-// error handling
-uint8_t ERROR_FLAGS = 0;
-void flagError(uint8_t errType) {
-	digitalWrite(LED_BUILTIN, HIGH);
-	ERROR_FLAGS |= 1 << errType;
-	if(errType <= UNKNOWN_CRITICAL_FAIL) {
-		Serial.print(F("Critical Error: "));
-		Serial.println(ERROR_FLAGS, BIN);
-		while(1);
-	}
-}

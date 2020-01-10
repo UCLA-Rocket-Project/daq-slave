@@ -3,11 +3,10 @@
 
 const int ETHERNET_HARDWARE_FAIL = 0;
 const int ETHERNET_LINK_FAIL = 1;
-const int MODBUS_SETUP_FAIL = 2;
-const int UNKNOWN_CRITICAL_FAIL = 3;
-const int CONNECTION_TIMEOUT = 4;
-const int THERMOCOUPLE_NAN = 5;
+const int UNKNOWN_CRITICAL_FAIL = 2;
 
+const int CONNECTION_TIMEOUT = 5;
+const int THERMOCOUPLE_NAN = 6;
 const int UNKNOWN_FAIL = 7;
 
 #endif

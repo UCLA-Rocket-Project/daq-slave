@@ -1,15 +1,15 @@
 #include <SPI.h>
 #include <Ethernet.h>
-#include <ArduinoModbus.h>
+#include <Modbus.h>
+#include <ModbusIP.h>
 #include "config.h"
 #include "shared.h"
 #include "errorTypes.h"
 
 EthernetServer server(PORT);
-ModbusTCPServer modbus;
-
+ModbusIP modbus;
 void setup() {
-	prep();
+	prepPins();
 	Serial.begin(115200);
 	while(!Serial);
 
@@ -18,7 +18,7 @@ void setup() {
 	// initialize ethernet / networking
 	Serial.println(F("Setting up ethernet...."));
 	Ethernet.init(ETHERNET_CS_PIN);
-	Ethernet.begin(macAddress);
+	modbus.config(const_cast<uint8_t*>(macAddress)); // cast away constness to suppress warning
 	if(Ethernet.hardwareStatus() == EthernetNoHardware) {
 		Serial.println(F("Could not detect any hardware"));
 		flagError(ETHERNET_HARDWARE_FAIL);
@@ -33,52 +33,28 @@ void setup() {
 	Serial.print(':');
 	Serial.println(PORT);
 
-	// initialize Modbus
-	if(!modbus.begin()) {
-		Serial.println(F("Could not start modbus server"));
-		flagError(MODBUS_SETUP_FAIL);
-	}
-	modbus.configureInputRegisters(lastUpdateLowAddr, 2);
-	modbus.configureInputRegisters(pressureTransducerAddr, numPressureTransducers);
-	modbus.configureInputRegisters(loadCellAddr, numLoadcells);
-	modbus.configureInputRegisters(thermoCoupleAddr, numThermoCouples);
+	// configure modbus
+	prepIregs(lastUpdateHighAddr, 2);
+	prepIregs(pressureTransducerAddr, numPressureTransducers);
+	prepIregs(loadCellAddr, numLoadcells);
+	prepIregs(thermoCoupleAddr, numThermoCouples);
 }
 uint16_t timeWords[2];
 void loop() {
-	EthernetClient client = server.available();
-	if(client) {
-		modbus.accept(client);
-		long connectTime = millis();
-		while(client.connected()) {
-			modbus.poll();
-			if(millis() > connectTime + MAX_TIMEOUT) {
-				Serial.println(F("Connection timeout, force closing"));
-				flagError(CONNECTION_TIMEOUT);
-				client.stop();
-				break;
-			}
-		}
-	}
+	modbus.task();
 
 	// update stuff
 	updatePressureTransducers();
-	modbus.writeInputRegisters(pressureTransducerAddr, pressureTransducers, numPressureTransducers);
+	writeIregs(pressureTransducerAddr, pressureTransducers, numPressureTransducers);
 	updateLoadcells();
-	modbus.writeInputRegisters(loadCellAddr, loadCells, numLoadcells);
+	writeIregs(loadCellAddr, loadCells, numLoadcells);
 	updateThermoCouples();
-	modbus.writeInputRegisters(thermoCoupleAddr, thermoCouples, numThermoCouples);
+	writeIregs(thermoCoupleAddr, thermoCouples, numThermoCouples);
 
 	// update the last known reading
 	uint32_t currentTime = millis();
-	timeWords[0] = currentTime & 0x000000FF;
-	timeWords[1] = currentTime & 0x0000FF00;
-}
-// for stuff that is guaranteed to work
-void prep() {
-	pinMode(LED_BUILTIN, OUTPUT);
-	pinMode(MUX_ENABLE_PIN, OUTPUT);
-	pinMode(THERMOCOUPLE_A0, OUTPUT);
-	pinMode(THERMOCOUPLE_A1, OUTPUT);
-	pinMode(THERMOCOUPLE_A2, OUTPUT);
-	digitalWrite(MUX_ENABLE_PIN, HIGH);
+	// flipped order for big endian
+	timeWords[1] = currentTime & 0x000000FF;
+	timeWords[0] = currentTime & 0x0000FF00;
+	writeIregs(lastUpdateHighAddr, timeWords, 2);
 }

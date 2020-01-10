@@ -1,5 +1,5 @@
 /*
-  Modbus-Arduino Example - TempSensor (Modbus IP)
+  Modbus-Arduino Example - Lamp (Modbus IP)
   Copyright by André Sarmento Barbosa
   http://github.com/andresarmento/modbus-arduino
 */
@@ -10,14 +10,12 @@
 #include <ModbusIP.h>
 
 //Modbus Registers Offsets (0-9999)
-const int SENSOR_IREG = 100; 
+const int LAMP1_COIL = 100; 
 //Used Pins
-const int sensorPin = A0;
+const int ledPin = 9;
 
 //ModbusIP object
 ModbusIP mb;
-
-long ts;
 
 void setup() {
     // The media access control (ethernet hardware) address for the shield
@@ -26,21 +24,16 @@ void setup() {
     byte ip[] = { 192, 168, 1, 120 };   
     //Config Modbus IP 
     mb.config(mac, ip);
-
-    // Add SENSOR_IREG register - Use addIreg() for analog Inputs
-    mb.addIreg(SENSOR_IREG);
-    
-    ts = millis();
+    //Set ledPin mode
+    pinMode(ledPin, OUTPUT);
+    // Add LAMP1_COIL register - Use addCoil() for digital outputs
+    mb.addCoil(LAMP1_COIL);
 }
 
 void loop() {
    //Call once inside loop() - all magic here
    mb.task();
    
-   //Read each two seconds
-   if (millis() > ts + 2000) {   
-       ts = millis();
-       //Setting raw value (0-1024)
-       mb.Ireg(SENSOR_IREG, analogRead(sensorPin));
-   } 
+   //Attach ledPin to LAMP1_COIL register     
+   digitalWrite(ledPin, mb.Coil(LAMP1_COIL));
 }

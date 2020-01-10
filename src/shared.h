@@ -2,12 +2,18 @@
 #define DAQ_SLAVE_BUFFERS
 #include <stdint.h>
 #include "config.h"
+#include <ModbusIP.h>
+extern ModbusIP modbus;
 
 extern uint16_t pressureTransducers[numPressureTransducers],
 	thermoCouples[numThermoCouples],
 	loadCells[numLoadcells];
 
-void prep();
+
+void prepPins();
+void prepIregs(int addr, int num);
+void writeIregs(int addr, uint16_t *arr, int num);
+
 void updatePressureTransducers();
 void updateThermoCouples();
 void updateLoadcells();
