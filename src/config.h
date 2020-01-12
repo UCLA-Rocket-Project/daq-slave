@@ -6,12 +6,11 @@
 // modbus properties
 const uint8_t deviceId = 69;
 
-const int lastUpdateHighAddr = 	30001;
+const int lastUpdateHighAddr = 	1;
 const int lastUpdateLowAddr = lastUpdateHighAddr + 1;
-
-const int pressureTransducerAddr = 	31001;
-const int loadCellAddr =32001;
-const int thermoCoupleAddr = 33001;
+const int pressureTransducerAddr = 1001;
+const int loadCellAddr = 2001;
+const int thermoCoupleAddr = 3001;
 
 // DAQ properties
 const int numPressureTransducers = 7;
