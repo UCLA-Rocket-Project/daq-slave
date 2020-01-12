@@ -11,6 +11,7 @@ const int lastUpdateLowAddr = lastUpdateHighAddr + 1;
 const int pressureTransducerAddr = 1001;
 const int loadCellAddr = 2001;
 const int thermoCoupleAddr = 3001;
+const int errorAddr = 3001;
 
 // DAQ properties
 const int numPressureTransducers = 7;
@@ -29,7 +30,6 @@ const uint8_t THERMOCOUPLE_A2 = 6;
 
 // network settings
 static constexpr uint8_t macAddress[] = { 0xAB, 0xBC, 0xCD, 0xDE, 0xEF, 0x00 };
-const uint16_t PORT = 502;
-const long MAX_TIMEOUT = 3000;
+#define MODBUSIP_PORT 502
 
 #endif

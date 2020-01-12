@@ -6,7 +6,6 @@
 #include "shared.h"
 #include "errorTypes.h"
 
-EthernetServer server(PORT);
 ModbusIP modbus;
 void setup() {
 	prepPins();
@@ -27,17 +26,17 @@ void setup() {
 		Serial.println(F("Could not create link"));
 		flagError(ETHERNET_LINK_FAIL);
 	}
-	server.begin();
 	Serial.print(F("Listening on: "));
 	Serial.print(Ethernet.localIP());
 	Serial.print(':');
-	Serial.println(PORT);
+	Serial.println(MODBUSIP_PORT);
 
 	// configure modbus
 	prepIregs(lastUpdateHighAddr, 2);
 	prepIregs(pressureTransducerAddr, numPressureTransducers);
 	prepIregs(loadCellAddr, numLoadcells);
 	prepIregs(thermoCoupleAddr, numThermoCouples);
+	prepCoils(errorAddr, UNKNOWN_FAIL + 1);
 }
 uint16_t timeWords[2];
 void loop() {
@@ -54,7 +53,7 @@ void loop() {
 	// update the last known reading
 	uint32_t currentTime = millis();
 	// flipped order for big endian
-	timeWords[1] = currentTime & 0x000000FF;
-	timeWords[0] = currentTime & 0x0000FF00;
+	timeWords[1] = currentTime & 0x0000FFFF;
+	timeWords[0] = currentTime & 0xFFFF0000;
 	writeIregs(lastUpdateHighAddr, timeWords, 2);
 }

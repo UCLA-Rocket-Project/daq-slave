@@ -12,13 +12,13 @@ extern uint16_t pressureTransducers[numPressureTransducers],
 
 void prepPins();
 void prepIregs(int addr, int num);
+void prepCoils(int addr, int num);
 void writeIregs(int addr, uint16_t *arr, int num);
 
 void updatePressureTransducers();
 void updateThermoCouples();
 void updateLoadcells();
 
-extern uint8_t ERROR_FLAGS;
 void flagError(uint8_t errType = 7);
 
 #endif
