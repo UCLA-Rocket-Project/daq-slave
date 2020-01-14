@@ -1,5 +1,4 @@
 #include <SPI.h>
-#include <Ethernet.h>
 #include <Modbus.h>
 #include <ModbusSerial.h>
 #include "config.h"
