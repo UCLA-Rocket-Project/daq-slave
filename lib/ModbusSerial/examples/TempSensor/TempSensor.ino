@@ -1,31 +1,28 @@
 /*
-  Modbus-Arduino Example - TempSensor (Modbus IP)
+  Modbus-Arduino Example - TempSensor (Modbus Serial)
   Copyright by André Sarmento Barbosa
   http://github.com/andresarmento/modbus-arduino
 */
  
-#include <SPI.h>
-#include <Ethernet.h>
 #include <Modbus.h>
-#include <ModbusIP.h>
+#include <ModbusSerial.h>
+
 
 //Modbus Registers Offsets (0-9999)
 const int SENSOR_IREG = 100; 
 //Used Pins
 const int sensorPin = A0;
 
-//ModbusIP object
-ModbusIP mb;
+// ModbusSerial object
+ModbusSerial mb;
 
 long ts;
 
 void setup() {
-    // The media access control (ethernet hardware) address for the shield
-    byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };  
-    // The IP address for the shield
-    byte ip[] = { 192, 168, 1, 120 };   
-    //Config Modbus IP 
-    mb.config(mac, ip);
+    // Config Modbus Serial (port, speed, byte format) 
+    mb.config(&Serial, 38400, SERIAL_8N1);
+    // Set the Slave ID (1-247)
+    mb.setSlaveId(10);  
 
     // Add SENSOR_IREG register - Use addIreg() for analog Inputs
     mb.addIreg(SENSOR_IREG);

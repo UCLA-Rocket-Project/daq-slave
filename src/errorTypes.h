@@ -1,8 +1,6 @@
 #ifndef DAQ_SLAVE_ERRORS
 #define DAQ_SLAVE_ERRORS
 
-const int ETHERNET_HARDWARE_FAIL = 0;
-const int ETHERNET_LINK_FAIL = 1;
 const int UNKNOWN_CRITICAL_FAIL = 2;
 
 const int CONNECTION_TIMEOUT = 5;

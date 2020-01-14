@@ -2,8 +2,8 @@
 #define DAQ_SLAVE_BUFFERS
 #include <stdint.h>
 #include "config.h"
-#include <ModbusIP.h>
-extern ModbusIP modbus;
+#include <ModbusSerial.h>
+extern ModbusSerial modbus;
 
 extern uint16_t pressureTransducers[numPressureTransducers],
 	thermoCouples[numThermoCouples],
