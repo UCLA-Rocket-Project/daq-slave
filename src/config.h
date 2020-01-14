@@ -31,7 +31,8 @@ const uint8_t THERMOCOUPLE_A2 = 6;
 // network settings
 static constexpr uint8_t macAddress[] = { 0x52,0x50,0x2d,0x44,0x41,0x51 };
 
-// static IP stuff (make sure USE_DHCP is not definedd)
+// static IP stuff (comment out below to use other fields)
+//#define USE_DHCP
 static constexpr uint8_t staticIp[] = { 10, 10, 10, 1 };
 static constexpr uint8_t gatewayIp[] = { 192, 168, 1, 1 };
 static constexpr uint8_t dnsIp[] = { 1, 1, 1, 1 };
