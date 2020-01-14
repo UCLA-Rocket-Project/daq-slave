@@ -1,8 +1,8 @@
 #include "AVLtree.h"
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 /* AVL class definition */
-template <class T>
-void AVLtree<T>::rebalance(AVLnode<T> *n) {
+
+void AVLtree::rebalance(AVLnode *n) {
     setBalance(n);
  
     if (n->balance == -2) {
@@ -26,9 +26,9 @@ void AVLtree<T>::rebalance(AVLnode<T> *n) {
     }
 }
  
-template <class T>
-AVLnode<T>* AVLtree<T>::rotateLeft(AVLnode<T> *a) {
-    AVLnode<T> *b = a->right;
+
+AVLnode* AVLtree::rotateLeft(AVLnode *a) {
+    AVLnode *b = a->right;
     b->parent = a->parent;
     a->right = b->left;
  
@@ -52,9 +52,9 @@ AVLnode<T>* AVLtree<T>::rotateLeft(AVLnode<T> *a) {
     return b;
 }
  
-template <class T>
-AVLnode<T>* AVLtree<T>::rotateRight(AVLnode<T> *a) {
-    AVLnode<T> *b = a->left;
+
+AVLnode* AVLtree::rotateRight(AVLnode *a) {
+    AVLnode *b = a->left;
     b->parent = a->parent;
     a->left = b->right;
  
@@ -78,63 +78,63 @@ AVLnode<T>* AVLtree<T>::rotateRight(AVLnode<T> *a) {
     return b;
 }
  
-template <class T>
-AVLnode<T>* AVLtree<T>::rotateLeftThenRight(AVLnode<T> *n) {
+
+AVLnode* AVLtree::rotateLeftThenRight(AVLnode *n) {
     n->left = rotateLeft(n->left);
     return rotateRight(n);
 }
  
-template <class T>
-AVLnode<T>* AVLtree<T>::rotateRightThenLeft(AVLnode<T> *n) {
+
+AVLnode* AVLtree::rotateRightThenLeft(AVLnode *n) {
     n->right = rotateRight(n->right);
     return rotateLeft(n);
 }
  
-template <class T>
-int AVLtree<T>::height(AVLnode<T> *n) {
+
+int AVLtree::height(AVLnode *n) {
     if (n == NULL)
         return -1;
     return 1 + MAX(height(n->left), height(n->right));
 }
  
-template <class T>
-void AVLtree<T>::setBalance(AVLnode<T> *n) {
+
+void AVLtree::setBalance(AVLnode *n) {
     n->balance = height(n->right) - height(n->left);
 }
 
-template <class T>
-AVLtree<T>::AVLtree(void) : root(NULL) {}
+
+AVLtree::AVLtree(void) : root(NULL) {}
  
-template <class T>
-AVLtree<T>::~AVLtree(void) {
+
+AVLtree::~AVLtree(void) {
     delete root;
 }
  
-template <class T>
-bool AVLtree<T>::insert(T key) {
+
+bool AVLtree::insert(uint16_t addr, uint16_t val) {
     if (root == NULL) {
-        root = new AVLnode<T>(key, NULL);
+        root = new AVLnode(addr, val, NULL);
     }
     else {
-        AVLnode<T>
+        AVLnode
             *n = root,
             *parent;
  
         while (true) {
-            if (n->key == key)
+            if (n->key.addr == addr)
                 return false;
  
             parent = n;
  
-            bool goLeft = n->key > key;
+            bool goLeft = n->key > addr;
             n = goLeft ? n->left : n->right;
  
             if (n == NULL) {
                 if (goLeft) {
-                    parent->left = new AVLnode<T>(key, parent);
+                    parent->left = new AVLnode(addr, val, parent);
                 }
                 else {
-                    parent->right = new AVLnode<T>(key, parent);
+                    parent->right = new AVLnode(addr, val, parent);
                 }
  
                 rebalance(parent);
@@ -145,43 +145,19 @@ bool AVLtree<T>::insert(T key) {
  
     return true;
 }
- 
-template <class T>
-void AVLtree<T>::deleteKey(const T delKey) {
-    if (root == NULL)
-        return;
- 
-    AVLnode<T>
-        *n       = root,
-        *parent  = root,
-        *delNode = NULL,
-        *child   = root;
- 
-    while (child != NULL) {
-        parent = n;
-        n = child;
-        child = delKey >= n->key ? n->right : n->left;
-        if (delKey == n->key)
-            delNode = n;
-    }
- 
-    if (delNode != NULL) {
-        delNode->key = n->key;
- 
-        child = n->left != NULL ? n->left : n->right;
- 
-        if (root->key == delKey) {
-            root = child;
+
+Register *AVLtree::seek(uint16_t addr) {
+    AVLnode *head = root;
+    while(head != nullptr) {
+        if(head->key.addr == addr) {
+            return &(head->key);
+        }
+        else if(addr < head->key.addr) {
+            head = head->left;
         }
         else {
-            if (parent->left == n) {
-                parent->left = child;
-            }
-            else {
-                parent->right = child;
-            }
- 
-            rebalance(parent);
+            head = head->right;
         }
     }
+    return nullptr;
 }

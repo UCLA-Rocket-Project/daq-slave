@@ -1,15 +1,16 @@
 #ifndef AVLTREE
 #define AVLTREE
+#include <stdint.h>
 #define NULL nullptr
+#include "Register.h"
 /* AVL node */
-template <class T>
 class AVLnode {
 public:
-    T key;
+    Register key;
     int balance;
     AVLnode *left, *right, *parent;
  
-    AVLnode(T k, AVLnode *p) : key(k), balance(0), parent(p),
+    AVLnode(uint16_t a, uint16_t v, AVLnode *p) : key(a, v), balance(0), parent(p),
                         left(NULL), right(NULL) {}
  
     ~AVLnode() {
@@ -19,26 +20,24 @@ public:
 };
  
 /* AVL tree */
-template <class T>
+
 class AVLtree {
 public:
     AVLtree(void);
     ~AVLtree(void);
-    bool insert(T key);
-    void deleteKey(const T key);
-    void printBalance();
+    bool insert(uint16_t addr, uint16_t val = 0);
+    Register *seek(uint16_t addr);
  
 private:
-    AVLnode<T> *root;
+    AVLnode *root;
  
-    AVLnode<T>* rotateLeft          ( AVLnode<T> *a );
-    AVLnode<T>* rotateRight         ( AVLnode<T> *a );
-    AVLnode<T>* rotateLeftThenRight ( AVLnode<T> *n );
-    AVLnode<T>* rotateRightThenLeft ( AVLnode<T> *n );
-    void rebalance                  ( AVLnode<T> *n );
-    int height                      ( AVLnode<T> *n );
-    void setBalance                 ( AVLnode<T> *n );
-    void printBalance               ( AVLnode<T> *n );
-    void clearNode                  ( AVLnode<T> *n );
+    AVLnode* rotateLeft          ( AVLnode *a );
+    AVLnode* rotateRight         ( AVLnode *a );
+    AVLnode* rotateLeftThenRight ( AVLnode *n );
+    AVLnode* rotateRightThenLeft ( AVLnode *n );
+    void rebalance                  ( AVLnode *n );
+    int height                      ( AVLnode *n );
+    void setBalance                 ( AVLnode *n );
+    void clearNode                  ( AVLnode *n );
 };
 #endif

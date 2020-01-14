@@ -1,6 +1,6 @@
 /*
     Modbus.h - Header for Modbus Base Library
-    Copyright (C) 2014 André Sarmento Barbosa
+    Copyright (C) 2014 Andrï¿½ Sarmento Barbosa
 */
 #include "Arduino.h"
 
@@ -40,16 +40,12 @@ enum {
     MB_REPLY_NORMAL = 0x03,
 };
 
-typedef struct TRegister {
-    word address;
-    word value;
-    struct TRegister* next;
-} TRegister;
+#include "AVLtree.h"
+#include "Register.h"
 
 class Modbus {
     private:
-        TRegister *_regs_head;
-        TRegister *_regs_last;
+        AVLtree registers;
 
         void readRegisters(word startreg, word numregs);
         void writeSingleRegister(word reg, word value);
@@ -63,7 +59,7 @@ class Modbus {
             void writeMultipleCoils(byte* frame,word startreg, word numoutputs, byte bytecount);
         #endif
 
-        TRegister* searchRegister(word addr);
+        Register *searchRegister(word addr);
 
         void addReg(word address, word value = 0);
         bool Reg(word address, word value);

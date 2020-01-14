@@ -1,65 +1,38 @@
 /*
     Modbus.cpp - Source for Modbus Base Library
-    Copyright (C) 2014 André Sarmento Barbosa
+    Copyright (C) 2014 Andrï¿½ Sarmento Barbosa
 */
 #include "Modbus.h"
 
 Modbus::Modbus() {
-    _regs_head = 0;
-    _regs_last = 0;
 }
 
-TRegister* Modbus::searchRegister(word address) {
-    TRegister *reg = _regs_head;
-    //if there is no register configured, bail
-    if(reg == 0) return(0);
-    //scan through the linked list until the end of the list or the register is found.
-    //return the pointer.
-    do {
-        if (reg->address == address) return(reg);
-        reg = reg->next;
-	} while(reg);
-	return(0);
+Register* Modbus::searchRegister(word address) {
+    return registers.seek(address);
 }
 
 void Modbus::addReg(word address, word value) {
-    TRegister *newreg;
-
-	newreg = (TRegister *) malloc(sizeof(TRegister));
-	newreg->address = address;
-	newreg->value		= value;
-	newreg->next		= 0;
-
-	if(_regs_head == 0) {
-        _regs_head = newreg;
-        _regs_last = _regs_head;
-    } else {
-        //Assign the last register's next pointer to newreg.
-        _regs_last->next = newreg;
-        //then make temp the last register in the list.
-        _regs_last = newreg;
-    }
+    registers.insert(address, value);
 }
 
 bool Modbus::Reg(word address, word value) {
-    TRegister *reg;
     //search for the register address
-    reg = this->searchRegister(address);
+    Register *reg = this->searchRegister(address);
     //if found then assign the register value to the new value.
     if (reg) {
-        reg->value = value;
+        reg->val = value;
         return true;
     } else
         return false;
 }
 
 word Modbus::Reg(word address) {
-    TRegister *reg;
-    reg = this->searchRegister(address);
-    if(reg)
-        return(reg->value);
+    Register *reg = this->searchRegister(address);
+    if (reg) {
+        return reg->val;
+    } 
     else
-        return(0);
+        return 0;
 }
 
 void Modbus::addHreg(word offset, word value) {
