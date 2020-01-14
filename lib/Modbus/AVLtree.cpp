@@ -1,4 +1,5 @@
 #include "AVLtree.h"
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
 /* AVL class definition */
 template <class T>
 void AVLtree<T>::rebalance(AVLnode<T> *n) {
@@ -93,7 +94,7 @@ template <class T>
 int AVLtree<T>::height(AVLnode<T> *n) {
     if (n == NULL)
         return -1;
-    return 1 + std::max(height(n->left), height(n->right));
+    return 1 + MAX(height(n->left), height(n->right));
 }
  
 template <class T>
