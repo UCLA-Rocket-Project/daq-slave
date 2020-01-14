@@ -16,16 +16,33 @@ void setup() {
 	
 	// initialize ethernet / networking
 	Serial.println(F("Setting up ethernet...."));
+	Serial.print(F("MAC ADDRESS:\t"));
+	for(int i = 0; i < sizeof(macAddress); i++) {
+		Serial.print(macAddress[i], HEX);
+	}
+	Serial.println();
 	Ethernet.init(ETHERNET_CS_PIN);
-	modbus.config(const_cast<uint8_t*>(macAddress)); // cast away constness to suppress warning
 	if(Ethernet.hardwareStatus() == EthernetNoHardware) {
 		Serial.println(F("Could not detect any hardware"));
 		flagError(ETHERNET_HARDWARE_FAIL);
 	}
-	if(Ethernet.linkStatus() != LinkON) {
+	Serial.println(F("PHY setup"));
+#ifdef USE_DHCP
+	modbus.config(
+		const_cast<uint8_t*>(macAddress)); // cast away constness to suppress warning
+#else
+	modbus.config(
+		const_cast<uint8_t*>(macAddress),
+		const_cast<uint8_t*>(staticIp),
+		const_cast<uint8_t*>(dnsIp),
+		const_cast<uint8_t*>(gatewayIp)); // cast away constness to suppress warning
+#endif	
+	Serial.println(F("Routing layer setup"));
+	if(Ethernet.linkStatus() == LinkOFF) {
 		Serial.println(F("Could not create link"));
 		flagError(ETHERNET_LINK_FAIL);
 	}
+
 	Serial.print(F("Listening on: "));
 	Serial.print(Ethernet.localIP());
 	Serial.print(':');
@@ -39,6 +56,7 @@ void setup() {
 	prepCoils(errorAddr, UNKNOWN_FAIL + 1);
 }
 uint16_t timeWords[2];
+long lastUpdate = 0;
 void loop() {
 	modbus.task();
 
@@ -56,4 +74,8 @@ void loop() {
 	timeWords[1] = currentTime & 0x0000FFFF;
 	timeWords[0] = currentTime & 0xFFFF0000;
 	writeIregs(lastUpdateHighAddr, timeWords, 2);
+
+	// print the update time
+	// Serial.println(currentTime - lastUpdate);
+	lastUpdate = currentTime;
 }
