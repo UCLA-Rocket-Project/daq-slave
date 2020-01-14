@@ -1,17 +1,16 @@
 #ifndef AVLTREE
 #define AVLTREE
 #include <stdint.h>
-#define NULL nullptr
 #include "Register.h"
 /* AVL node */
 class AVLnode {
 public:
     Register key;
     int balance;
-    AVLnode *left, *right, *parent;
+    AVLnode *parent, *left, *right;
  
     AVLnode(uint16_t a, uint16_t v, AVLnode *p) : key(a, v), balance(0), parent(p),
-                        left(NULL), right(NULL) {}
+                        left(0), right(0) {}
  
     ~AVLnode() {
         delete left;

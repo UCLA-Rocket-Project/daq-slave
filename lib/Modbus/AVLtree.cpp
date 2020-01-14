@@ -18,7 +18,7 @@ void AVLtree::rebalance(AVLnode *n) {
             n = rotateRightThenLeft(n);
     }
  
-    if (n->parent != NULL) {
+    if (n->parent != nullptr) {
         rebalance(n->parent);
     }
     else {
@@ -32,13 +32,13 @@ AVLnode* AVLtree::rotateLeft(AVLnode *a) {
     b->parent = a->parent;
     a->right = b->left;
  
-    if (a->right != NULL)
+    if (a->right != nullptr)
         a->right->parent = a;
  
     b->left = a;
     a->parent = b;
  
-    if (b->parent != NULL) {
+    if (b->parent != nullptr) {
         if (b->parent->right == a) {
             b->parent->right = b;
         }
@@ -58,13 +58,13 @@ AVLnode* AVLtree::rotateRight(AVLnode *a) {
     b->parent = a->parent;
     a->left = b->right;
  
-    if (a->left != NULL)
+    if (a->left != nullptr)
         a->left->parent = a;
  
     b->right = a;
     a->parent = b;
  
-    if (b->parent != NULL) {
+    if (b->parent != nullptr) {
         if (b->parent->right == a) {
             b->parent->right = b;
         }
@@ -92,7 +92,7 @@ AVLnode* AVLtree::rotateRightThenLeft(AVLnode *n) {
  
 
 int AVLtree::height(AVLnode *n) {
-    if (n == NULL)
+    if (n == nullptr)
         return -1;
     return 1 + MAX(height(n->left), height(n->right));
 }
@@ -103,7 +103,7 @@ void AVLtree::setBalance(AVLnode *n) {
 }
 
 
-AVLtree::AVLtree(void) : root(NULL) {}
+AVLtree::AVLtree(void) : root(nullptr) {}
  
 
 AVLtree::~AVLtree(void) {
@@ -112,8 +112,8 @@ AVLtree::~AVLtree(void) {
  
 
 bool AVLtree::insert(uint16_t addr, uint16_t val) {
-    if (root == NULL) {
-        root = new AVLnode(addr, val, NULL);
+    if (root == nullptr) {
+        root = new AVLnode(addr, val, nullptr);
     }
     else {
         AVLnode
@@ -126,10 +126,10 @@ bool AVLtree::insert(uint16_t addr, uint16_t val) {
  
             parent = n;
  
-            bool goLeft = n->key > addr;
+            bool goLeft = n->key.addr > addr;
             n = goLeft ? n->left : n->right;
  
-            if (n == NULL) {
+            if (n == nullptr) {
                 if (goLeft) {
                     parent->left = new AVLnode(addr, val, parent);
                 }
