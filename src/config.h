@@ -29,10 +29,11 @@ const uint8_t THERMOCOUPLE_A1 = 5;
 const uint8_t THERMOCOUPLE_A2 = 6;
 
 // network settings
-static constexpr uint8_t macAddress[] = { 0x52,0x50,0x2d,0x44,0x41,0x51 };
+static constexpr uint8_t macAddress[6] = { 0xFE, 0xED, 0xDE, 0xAD, 0xBE, 0xEF  };
 
 // static IP stuff (comment out below to use other fields)
-//#define USE_DHCP
+#define DAQ_USE_DHCP
+#define TCP_KEEP_ALIVE
 static constexpr uint8_t staticIp[] = { 10, 10, 10, 1 };
 static constexpr uint8_t gatewayIp[] = { 192, 168, 1, 1 };
 static constexpr uint8_t dnsIp[] = { 1, 1, 1, 1 };

@@ -27,7 +27,7 @@ void setup() {
 		flagError(ETHERNET_HARDWARE_FAIL);
 	}
 	Serial.println(F("PHY setup"));
-#ifdef USE_DHCP
+#ifdef DAQ_USE_DHCP
 	modbus.config(
 		const_cast<uint8_t*>(macAddress)); // cast away constness to suppress warning
 #else
@@ -65,7 +65,7 @@ void loop() {
 	writeIregs(pressureTransducerAddr, pressureTransducers, numPressureTransducers);
 	updateLoadcells();
 	writeIregs(loadCellAddr, loadCells, numLoadcells);
-	updateThermoCouples();
+	//updateThermoCouples();
 	writeIregs(thermoCoupleAddr, thermoCouples, numThermoCouples);
 
 	// update the last known reading
