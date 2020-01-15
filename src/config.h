@@ -14,8 +14,8 @@ const uint8_t deviceId = 15;
 const int lastUpdateHighAddr = 	1;
 const int lastUpdateLowAddr = lastUpdateHighAddr + 1;
 const int pressureTransducerAddr = 1001;
-const int loadCellAddr = pressureTransducerAddr + numPressureTransducers;
-const int thermoCoupleAddr = loadCellAddr + numLoadcells;
+const int thermoCoupleAddr = 1021;
+const int loadCellAddr = 1031;
 const int errorAddr = 3001;
 
 
