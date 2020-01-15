@@ -34,8 +34,8 @@ void loop() {
 		writeIregs(loadCellAddr, loadCells, numLoadcells);
 		updateThermoCouples();
 		writeIregs(thermoCoupleAddr, thermoCouples, numThermoCouples);
-		writeIregs(lastUpdateHighAddr, timeWords, 2);
-		lastUpdate = currentTime;
 	}
 	modbus.task();
+	writeIregs(lastUpdateHighAddr, timeWords, 2);
+	lastUpdate = currentTime;
 }
