@@ -1,8 +1,8 @@
 #include "shared.h"
 #include "config.h"
 #include <Arduino.h>
+#include <TCMux.h>
 #include "errorTypes.h"
-#include "TCMux.h"
 
 uint16_t pressureTransducers[numPressureTransducers],
 	thermoCouples[numThermoCouples],
