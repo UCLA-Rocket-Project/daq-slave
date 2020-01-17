@@ -1,4 +1,3 @@
-#include <SPI.h>
 #include <Modbus.h>
 #include <ModbusSerial.h>
 #include "config.h"
@@ -18,7 +17,7 @@ void setup() {
 	prepCoils(errorAddr, UNKNOWN_FAIL + 1);
 }
 uint16_t timeWords[2];
-long lastUpdate = 0;
+uint32_t lastUpdate = 0;
 void loop() {
 	// update the last known reading
 	uint32_t currentTime = millis();
@@ -36,6 +35,7 @@ void loop() {
 		writeIregs(thermoCoupleAddr, thermoCouples, numThermoCouples);
 
 		writeIregs(lastUpdateHighAddr, timeWords, 2);
+		//Serial.println(lastUpdate - currentTime);
 		lastUpdate = currentTime;
 	}
 	modbus.task();

@@ -4,11 +4,6 @@
 // for stuff that is guaranteed to work
 void prepPins() {
 	pinMode(LED_BUILTIN, OUTPUT);
-	pinMode(MUX_ENABLE_PIN, OUTPUT);
-	pinMode(THERMOCOUPLE_A0, OUTPUT);
-	pinMode(THERMOCOUPLE_A1, OUTPUT);
-	pinMode(THERMOCOUPLE_A2, OUTPUT);
-	digitalWrite(MUX_ENABLE_PIN, HIGH);
 }
 // prepares registers
 void prepIregs(int addr, int num) {
