@@ -2,6 +2,8 @@
 #define TC_MUX
 #include <stdint.h>
 
+const uint8_t RESPONSE_TIME = 75;
+
 class TCMux {
 public:
 	uint8_t pinEn,
@@ -24,13 +26,21 @@ public:
 
 	uint16_t readTC(uint8_t index, uint8_t &err);
 	uint16_t readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp);
+	bool ready();
+	uint8_t samplingSensor();
 
 private:
+	uint32_t readingStartTime = 0;
+	uint16_t cachedReadings[8];
+	uint16_t cachedInternal;
+	int8_t readingIndex = -1;
+	bool readComplete = false;
 	void setupPins();
 	void muxPins(uint8_t index);
 };
 
-const int FAULT_SHORT_HIGH = 3;
-const int FAULT_SHORT_GND = 2;
-const int FAULT_SHORT_OPEN = 1;
+const uint8_t STALE_VALUE = 4;
+const uint8_t FAULT_SHORT_HIGH = 3;
+const uint8_t FAULT_SHORT_GND = 2;
+const uint8_t FAULT_SHORT_OPEN = 1;
 #endif

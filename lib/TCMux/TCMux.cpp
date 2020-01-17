@@ -19,14 +19,26 @@ TCMux::TCMux(uint8_t pinEn,
 	setupPins();
 }
 uint16_t TCMux::readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp) {
-	muxPins(index);
+	if(index != readingIndex) {
+		muxPins(index);
 
-	// store a reading in the Max31855
-	// datasheet: https://datasheets.maximintegrated.com/en/ds/MAX31855.pdf
-	digitalWrite(pinCs, LOW); // stop last conversion
-	delayMicroseconds(1); // data sheet specifies 100ns
-	digitalWrite(pinCs, HIGH); //restart conversion
-	delay(75); // data sheet says 70ms typical, 100 hard max
+		// store a reading in the Max31855
+		// datasheet: https://datasheets.maximintegrated.com/en/ds/MAX31855.pdf
+		digitalWrite(pinCs, LOW); // stop last conversion
+		delayMicroseconds(1); // data sheet specifies 100ns
+		digitalWrite(pinCs, HIGH); //restart conversion		
+		readingStartTime = millis();
+		readingIndex = index;
+		readComplete = false;
+	}
+	// ensure that at least RESPONSE_TIME ms has elapsed between reads
+	// alternatively if we already have a valid read, just return the cached value
+	if(!ready() || readComplete) {
+		internalTemp = cachedInternal;
+		err = STALE_VALUE;
+		return cachedReadings[readingIndex];
+	}
+
 	digitalWrite(pinCs, LOW);
 	delayMicroseconds(1);
 
@@ -95,6 +107,9 @@ uint16_t TCMux::readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp) {
 		return 0;
 	}
 	internalTemp = rawInternal;
+	cachedInternal = rawInternal;
+	cachedReadings[readingIndex] = rawReading;
+	readComplete = true;
 	return rawReading;
 }
 
@@ -123,4 +138,12 @@ void TCMux::muxPins(uint8_t index) {
 	digitalWrite(pinA0, index & 1);
 	digitalWrite(pinA1, (index & 0b10) >> 1);
 	digitalWrite(pinA1, (index & 0b100) >> 2);
+}
+
+uint8_t TCMux::samplingSensor() {
+	return readingIndex;
+}
+
+bool TCMux::ready() {
+	return readComplete || millis() > readingStartTime + RESPONSE_TIME;
 }
