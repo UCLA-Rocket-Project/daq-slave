@@ -22,21 +22,20 @@ uint16_t TCMux::readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp) {
 		setupPins();
 		setup = true;
 	}
-	if(index != readingIndex) {
+	if(readComplete || index != readingIndex) {
 		muxPins(index);
-
+		readingIndex = index;
+		readComplete = false;
 		// store a reading in the Max31855
 		// datasheet: https://datasheets.maximintegrated.com/en/ds/MAX31855.pdf
 		digitalWrite(pinCs, LOW); // stop last conversion
 		delayMicroseconds(1); // data sheet specifies 100ns
 		digitalWrite(pinCs, HIGH); //restart conversion		
 		readingStartTime = millis();
-		readingIndex = index;
-		readComplete = false;
 	}
 	// ensure that at least RESPONSE_TIME ms has elapsed between reads
 	// alternatively if we already have a valid read, just return the cached value
-	if(!ready() || readComplete) {
+	if(!ready()) {
 		internalTemp = cachedInternal;
 		err = STALE_VALUE;
 		return cachedReadings[readingIndex];
