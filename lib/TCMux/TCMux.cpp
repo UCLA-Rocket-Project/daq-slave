@@ -16,9 +16,12 @@ TCMux::TCMux(uint8_t pinEn,
 	this->pinSo = pinSo,
 	this->pinSc = pinSc;
 	this->pinCs = pinCs;
-	setupPins();
 }
 uint16_t TCMux::readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp) {
+	if(!setup) {
+		setupPins();
+		setup = true;
+	}
 	if(index != readingIndex) {
 		muxPins(index);
 
@@ -46,7 +49,7 @@ uint16_t TCMux::readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp) {
 	int16_t rawInternal = 0;
 	uint16_t mask = 0;
 	// parse bytes
-	for(uint8_t i = 31; i >= 0; i--) {
+	for(int8_t i = 31; i >= 0; i--) {
 		digitalWrite(pinSc, HIGH);
 		delayMicroseconds(1);
 		

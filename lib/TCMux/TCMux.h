@@ -35,6 +35,7 @@ private:
 	uint16_t cachedInternal;
 	int8_t readingIndex = -1;
 	bool readComplete = false;
+	bool setup = false;
 	void setupPins();
 	void muxPins(uint8_t index);
 };
