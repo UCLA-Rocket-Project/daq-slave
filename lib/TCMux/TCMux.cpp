@@ -34,7 +34,6 @@ uint16_t TCMux::readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp) {
 		readingStartTime = millis();
 	}
 	// ensure that at least RESPONSE_TIME ms has elapsed between reads
-	// alternatively if we already have a valid read, just return the cached value
 	if(!ready()) {
 		internalTemp = cachedInternal;
 		err = STALE_VALUE;
@@ -147,5 +146,5 @@ uint8_t TCMux::samplingSensor() {
 }
 
 bool TCMux::ready() {
-	return readComplete || millis() > readingStartTime + RESPONSE_TIME;
+	return millis() > readingStartTime + RESPONSE_TIME;
 }
