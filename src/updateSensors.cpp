@@ -22,8 +22,8 @@ uint8_t nextTc = 0;
 uint8_t err;
 TCMux tc;
 void updateThermoCouples() {
-	thermoCouples[nextTc] = tc.readTC(nextTc, err);
-	if(!err) { // only progress when we get a valid value
+	thermoCouples[0] = tc.readTC(0, err);
+	if(err != STALE_VALUE) { // only progress when we get a valid value
 		nextTc++;
 		if(nextTc >= numThermoCouples) {
 			nextTc = 0;

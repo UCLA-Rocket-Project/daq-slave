@@ -2,7 +2,16 @@
 #define TC_MUX
 #include <stdint.h>
 
-const uint8_t RESPONSE_TIME = 75;
+#ifdef TC_DBG
+#define DBG_LOGLN(x) Serial.println(x)
+#define DBG_LOG(x) Serial.print(x)
+const uint16_t RESPONSE_TIME = 5000;
+#else
+#define DBG_LOGLN(x) {}
+#define DBG_LOG(x) {}
+const uint16_t RESPONSE_TIME = 70;
+#endif
+
 
 class TCMux {
 public:
@@ -24,15 +33,17 @@ public:
 		uint8_t pinCs);
 	TCMux(): TCMux(7, 4, 5, 6, 12, 13, 9) {};
 
-	uint16_t readTC(uint8_t index, uint8_t &err);
-	uint16_t readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp);
+	int16_t readTC(uint8_t index, uint8_t &err);
+	int16_t readTC(uint8_t index, uint8_t &err, int16_t &internalTemp);
 	bool ready();
 	uint8_t samplingSensor();
+	float toCentigrade(int16_t reading);
+	float toFreedomUnits(int16_t reading);
 
 private:
-	uint32_t readingStartTime = 0;
-	uint16_t cachedReadings[8];
-	uint16_t cachedInternal;
+	unsigned long readingStartTime = 0;
+	int16_t cachedReadings[8];
+	int16_t cachedInternal;
 	int8_t readingIndex = -1;
 	bool readComplete = false;
 	bool setup = false;

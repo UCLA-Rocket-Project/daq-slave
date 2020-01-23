@@ -35,7 +35,6 @@ void loop() {
 		writeIregs(thermoCoupleAddr, thermoCouples, numThermoCouples);
 
 		writeIregs(lastUpdateHighAddr, timeWords, 2);
-		//Serial.println(lastUpdate - currentTime);
 		lastUpdate = currentTime;
 	}
 	modbus.task();

@@ -17,7 +17,8 @@ TCMux::TCMux(uint8_t pinEn,
 	this->pinSc = pinSc;
 	this->pinCs = pinCs;
 }
-uint16_t TCMux::readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp) {
+int16_t TCMux::readTC(uint8_t index, uint8_t &err, int16_t &internalTemp) {
+	err = 0;
 	if(!setup) {
 		setupPins();
 		setup = true;
@@ -35,11 +36,12 @@ uint16_t TCMux::readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp) {
 	}
 	// ensure that at least RESPONSE_TIME ms has elapsed between reads
 	if(!ready()) {
+		//Serial.println("Not ready");
 		internalTemp = cachedInternal;
 		err = STALE_VALUE;
 		return cachedReadings[readingIndex];
 	}
-
+	DBG_LOGLN("My time has come");
 	digitalWrite(pinCs, LOW);
 	delayMicroseconds(1);
 
@@ -56,7 +58,8 @@ uint16_t TCMux::readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp) {
 		bit 31: sign
 		bit 30: MSB = 2^10
 		bit 18: LSB	= 2^-2
-		*/	
+		*/
+		DBG_LOG(digitalRead(pinSo));	
 		if(i <= 31 && i >= 18) {
 			mask = 1 << (i - 18);
 			if (digitalRead(pinSo)) {
@@ -103,19 +106,23 @@ uint16_t TCMux::readTC(uint8_t index, uint8_t &err, uint16_t &internalTemp) {
 
 		digitalWrite(pinSc, LOW);
 		delayMicroseconds(1);
-	}
-	if(err) {
-		return 0;
-	}
+	} // end for
 	internalTemp = rawInternal;
 	cachedInternal = rawInternal;
 	cachedReadings[readingIndex] = rawReading;
 	readComplete = true;
+	DBG_LOGLN();
+	if(err) {
+		DBG_LOG("ERR CODE: ");
+		DBG_LOGLN(err);
+		return 0;
+	}
+	DBG_LOGLN(rawReading);
 	return rawReading;
 }
 
-uint16_t TCMux::readTC(uint8_t index, uint8_t &err) {
-	uint16_t meh;
+int16_t TCMux::readTC(uint8_t index, uint8_t &err) {
+	int16_t meh;
 	return readTC(index, err, meh);
 }
 
@@ -143,6 +150,15 @@ void TCMux::muxPins(uint8_t index) {
 
 uint8_t TCMux::samplingSensor() {
 	return readingIndex;
+}
+
+float TCMux::toCentigrade(int16_t reading) {
+	return ( (float)reading ) * 0.25;
+}
+
+float TCMux::toFreedomUnits(int16_t reading) {
+	float cent = toCentigrade(reading);
+	return (cent * 9) / 5 + 32;
 }
 
 bool TCMux::ready() {
