@@ -7,11 +7,8 @@
 ModbusSerial modbus;
 void setup() {
 	prepPins();	
-#ifndef __AVR_ATmega32u4__
-	modbus.config(&Serial, 115200, SERIAL_8N1, TX_PIN);
-#else 
-	modbus.config(&Serial1, 115200, SERIAL_8N1, TX_PIN);
-#endif 
+	modbus.config(&SERIAL_PORT, 115200, SERIAL_8N1, TX_PIN);
+
 	modbus.setSlaveId(deviceId);
 	
 	prepIregs(lastUpdateHighAddr, 2);

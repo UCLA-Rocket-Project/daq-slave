@@ -32,7 +32,8 @@ const uint8_t TC_MOSI = 11;
 const uint8_t TC_MISO = 12;
 const uint8_t TC_SCK = 13;
 
-// network settings
-static constexpr uint8_t macAddress[6] = { 0xFE, 0xED, 0xDE, 0xAD, 0xBE, 0xEF  };
+#ifndef SERIAL_PORT
+#define SERIAL_PORT Serial
+#endif
 
 #endif
